@@ -1,0 +1,1413 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Candela Food Trailer – Best Food On The Street | Aruba</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@300;400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --fire-red: #D62828;
+      --fire-orange: #F46036;
+      --fire-amber: #F7B731;
+      --ember: #FF4500;
+      --coal: #0D0D0D;
+      --char: #1A1A1A;
+      --ash: #2A2A2A;
+      --smoke: #3D3D3D;
+      --light-smoke: #888;
+      --cream: #F5EDD6;
+      --white: #FAFAFA;
+    }
+
+    html { scroll-behavior: smooth; }
+
+    body {
+      background-color: var(--coal);
+      color: var(--cream);
+      font-family: 'Barlow', sans-serif;
+      font-weight: 300;
+      overflow-x: hidden;
+    }
+
+    /* ── FIRE PARTICLE CANVAS ── */
+    #fire-canvas {
+      position: fixed;
+      top: 0; left: 0;
+      width: 100%; height: 100%;
+      pointer-events: none;
+      z-index: 0;
+      opacity: 0.18;
+    }
+
+    /* ── NAV ── */
+    nav {
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 100;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 18px 48px;
+      background: linear-gradient(to bottom, rgba(0,0,0,0.92) 0%, transparent 100%);
+      backdrop-filter: blur(4px);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      text-decoration: none;
+    }
+
+    .nav-logo img {
+      height: 56px;
+      width: 56px;
+      object-fit: contain;
+      border-radius: 50%;
+      border: 2px solid var(--fire-red);
+      background: #111;
+      padding: 4px;
+    }
+
+    .nav-links {
+      display: flex;
+      gap: 36px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--cream);
+      text-decoration: none;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      position: relative;
+      transition: color 0.3s;
+    }
+
+    .nav-links a::after {
+      content: '';
+      position: absolute;
+      bottom: -3px; left: 0;
+      width: 0; height: 2px;
+      background: var(--fire-orange);
+      transition: width 0.3s;
+    }
+
+    .nav-links a:hover { color: var(--fire-orange); }
+    .nav-links a:hover::after { width: 100%; }
+
+    .nav-order-btn {
+      background: var(--fire-red);
+      color: #fff;
+      border: none;
+      padding: 10px 24px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-block;
+      transition: background 0.3s, transform 0.2s;
+      clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 100%, 10px 100%);
+    }
+
+    .nav-order-btn:hover {
+      background: var(--fire-orange);
+      transform: scale(1.05);
+    }
+
+    /* ── HERO ── */
+    .hero {
+      position: relative;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      z-index: 1;
+      overflow: hidden;
+    }
+
+    .hero-bg {
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 50% at 50% 80%, rgba(214,40,40,0.3) 0%, transparent 70%),
+        radial-gradient(ellipse 80% 60% at 50% 100%, rgba(244,96,54,0.15) 0%, transparent 60%),
+        linear-gradient(180deg, #050505 0%, #0D0D0D 100%);
+    }
+
+    /* Animated ember glow */
+    .hero-bg::after {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 50%;
+      transform: translateX(-50%);
+      width: 600px; height: 300px;
+      background: radial-gradient(ellipse, rgba(255,69,0,0.4) 0%, transparent 70%);
+      animation: pulse-glow 3s ease-in-out infinite alternate;
+    }
+
+    @keyframes pulse-glow {
+      from { opacity: 0.5; transform: translateX(-50%) scaleX(1); }
+      to   { opacity: 1;   transform: translateX(-50%) scaleX(1.2); }
+    }
+
+    .hero-content {
+      position: relative;
+      z-index: 2;
+      padding: 120px 20px 80px;
+    }
+
+    .hero-tagline {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--fire-orange);
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+    }
+
+    .hero-tagline::before,
+    .hero-tagline::after {
+      content: '';
+      width: 40px; height: 1px;
+      background: var(--fire-orange);
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(64px, 12vw, 140px);
+      font-weight: 900;
+      line-height: 0.9;
+      color: var(--white);
+      text-shadow:
+        0 0 80px rgba(214,40,40,0.6),
+        0 0 120px rgba(244,96,54,0.3);
+      letter-spacing: -3px;
+      margin-bottom: 12px;
+    }
+
+    .hero-title span {
+      display: block;
+      color: var(--fire-red);
+      font-style: italic;
+    }
+
+    .hero-sub {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 20px;
+      font-weight: 400;
+      letter-spacing: 3px;
+      color: var(--light-smoke);
+      text-transform: uppercase;
+      margin-bottom: 16px;
+    }
+
+    .hero-desc {
+      max-width: 520px;
+      margin: 0 auto 40px;
+      font-size: 17px;
+      line-height: 1.7;
+      color: #bbb;
+    }
+
+    .hero-ctas {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-primary {
+      background: var(--fire-red);
+      color: #fff;
+      text-decoration: none;
+      padding: 16px 36px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 100%, 12px 100%);
+      transition: background 0.3s, transform 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-primary:hover {
+      background: var(--fire-orange);
+      transform: scale(1.05);
+    }
+
+    .btn-outline {
+      border: 1px solid rgba(245,237,214,0.3);
+      color: var(--cream);
+      text-decoration: none;
+      padding: 16px 36px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 600;
+      font-size: 15px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 100%, 12px 100%);
+      transition: background 0.3s, border-color 0.3s, color 0.3s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-outline:hover {
+      background: rgba(255,255,255,0.08);
+      border-color: var(--fire-orange);
+      color: var(--fire-orange);
+    }
+
+    /* Scroll indicator */
+    .scroll-hint {
+      position: absolute;
+      bottom: 30px; left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      color: var(--smoke);
+      font-size: 11px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      animation: bounce 2s infinite;
+    }
+
+    @keyframes bounce {
+      0%, 100% { transform: translateX(-50%) translateY(0); }
+      50% { transform: translateX(-50%) translateY(8px); }
+    }
+
+    /* ── ABOUT STRIP ── */
+    .about-strip {
+      position: relative;
+      z-index: 1;
+      background: var(--fire-red);
+      padding: 20px 48px;
+      display: flex;
+      justify-content: center;
+      gap: 60px;
+      flex-wrap: wrap;
+    }
+
+    .strip-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 16px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: #fff;
+    }
+
+    .strip-item i { font-size: 18px; opacity: 0.85; }
+
+    /* ── SECTION BASE ── */
+    section {
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 5px;
+      text-transform: uppercase;
+      color: var(--fire-orange);
+      margin-bottom: 12px;
+    }
+
+    .section-title {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(36px, 5vw, 64px);
+      font-weight: 900;
+      color: var(--white);
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+
+    .section-title em {
+      font-style: italic;
+      color: var(--fire-red);
+    }
+
+    .divider {
+      width: 60px; height: 3px;
+      background: linear-gradient(90deg, var(--fire-red), var(--fire-orange));
+      margin-bottom: 24px;
+    }
+
+    /* ── ABOUT ── */
+    #about {
+      padding: 100px 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 80px;
+      align-items: center;
+    }
+
+    .about-text p {
+      font-size: 17px;
+      line-height: 1.8;
+      color: #bbb;
+      margin-bottom: 20px;
+    }
+
+    .about-text p strong {
+      color: var(--cream);
+      font-weight: 500;
+    }
+
+    .about-stats {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 2px;
+    }
+
+    .stat-box {
+      background: var(--ash);
+      padding: 40px 30px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+      transition: background 0.3s;
+    }
+
+    .stat-box::before {
+      content: '';
+      position: absolute;
+      bottom: 0; left: 0; right: 0;
+      height: 3px;
+      background: linear-gradient(90deg, var(--fire-red), var(--fire-orange));
+      transform: scaleX(0);
+      transition: transform 0.4s;
+    }
+
+    .stat-box:hover::before { transform: scaleX(1); }
+    .stat-box:hover { background: var(--smoke); }
+
+    .stat-number {
+      font-family: 'Playfair Display', serif;
+      font-size: 56px;
+      font-weight: 900;
+      color: var(--fire-red);
+      line-height: 1;
+    }
+
+    .stat-label {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--light-smoke);
+      margin-top: 6px;
+    }
+
+    /* ── MENU ── */
+    #menu {
+      background: var(--char);
+      padding: 100px 48px;
+    }
+
+    .menu-header {
+      text-align: center;
+      max-width: 600px;
+      margin: 0 auto 64px;
+    }
+
+    .menu-header .divider { margin: 0 auto 24px; }
+
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 2px;
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .menu-card {
+      background: var(--ash);
+      padding: 36px 30px;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.3s;
+    }
+
+    .menu-card::after {
+      content: '';
+      position: absolute;
+      top: 0; left: 0;
+      width: 4px; height: 100%;
+      background: linear-gradient(180deg, var(--fire-red), var(--fire-orange));
+      transform: scaleY(0);
+      transform-origin: bottom;
+      transition: transform 0.4s;
+    }
+
+    .menu-card:hover { transform: translateY(-4px); }
+    .menu-card:hover::after { transform: scaleY(1); }
+
+    .menu-card-icon {
+      width: 48px; height: 48px;
+      background: rgba(214,40,40,0.15);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 18px;
+      font-size: 20px;
+      color: var(--fire-orange);
+    }
+
+    .menu-card h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 22px;
+      font-weight: 800;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--white);
+      margin-bottom: 10px;
+    }
+
+    .menu-card p {
+      font-size: 15px;
+      line-height: 1.6;
+      color: #999;
+    }
+
+    .menu-card .menu-tag {
+      display: inline-block;
+      margin-top: 14px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--fire-orange);
+      border: 1px solid rgba(244,96,54,0.3);
+      padding: 3px 10px;
+    }
+
+    /* ── REVIEWS ── */
+    #reviews {
+      padding: 100px 48px;
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+    .reviews-header {
+      display: flex;
+      align-items: flex-end;
+      justify-content: space-between;
+      margin-bottom: 56px;
+      flex-wrap: wrap;
+      gap: 24px;
+    }
+
+    .reviews-rating {
+      text-align: right;
+    }
+
+    .reviews-rating .big-score {
+      font-family: 'Playfair Display', serif;
+      font-size: 72px;
+      font-weight: 900;
+      color: var(--fire-amber);
+      line-height: 1;
+    }
+
+    .stars { color: var(--fire-amber); font-size: 20px; }
+
+    .reviews-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 2px;
+    }
+
+    .review-card {
+      background: var(--ash);
+      padding: 36px 30px;
+      position: relative;
+    }
+
+    .review-card::before {
+      content: '\201C';
+      position: absolute;
+      top: 20px; right: 24px;
+      font-family: 'Playfair Display', serif;
+      font-size: 80px;
+      color: rgba(214,40,40,0.15);
+      line-height: 1;
+    }
+
+    .review-stars { color: var(--fire-amber); margin-bottom: 14px; }
+
+    .review-text {
+      font-size: 15px;
+      line-height: 1.7;
+      color: #bbb;
+      margin-bottom: 20px;
+      font-style: italic;
+    }
+
+    .review-author {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .review-avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--fire-red), var(--fire-orange));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 800;
+      font-size: 16px;
+      color: #fff;
+    }
+
+    .review-name {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      color: var(--cream);
+    }
+
+    .review-source {
+      font-size: 12px;
+      color: var(--light-smoke);
+    }
+
+    /* ── LOCATIONS ── */
+    #locations {
+      background: var(--char);
+      padding: 100px 48px;
+    }
+
+    .locations-inner {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    .locations-header { margin-bottom: 56px; }
+
+    .locations-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+    }
+
+    .location-card {
+      background: var(--ash);
+      padding: 40px 36px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .location-card .loc-badge {
+      position: absolute;
+      top: 0; right: 0;
+      background: var(--fire-red);
+      color: #fff;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 12px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      padding: 6px 14px;
+    }
+
+    .location-card h3 {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 28px;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--white);
+      margin-bottom: 24px;
+    }
+
+    .loc-detail {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 18px;
+    }
+
+    .loc-detail i {
+      color: var(--fire-orange);
+      font-size: 16px;
+      margin-top: 2px;
+      min-width: 18px;
+    }
+
+    .loc-detail-text {
+      font-size: 15px;
+      line-height: 1.5;
+      color: #bbb;
+    }
+
+    .loc-detail-text strong {
+      color: var(--cream);
+      font-weight: 500;
+      display: block;
+      margin-bottom: 2px;
+    }
+
+    .loc-map-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 24px;
+      color: var(--fire-orange);
+      text-decoration: none;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      border-bottom: 1px solid rgba(244,96,54,0.4);
+      padding-bottom: 2px;
+      transition: color 0.3s, border-color 0.3s;
+    }
+
+    .loc-map-btn:hover {
+      color: var(--fire-amber);
+      border-color: var(--fire-amber);
+    }
+
+    /* Hours table */
+    .hours-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 4px;
+    }
+
+    .hours-table tr:not(:last-child) td {
+      padding-bottom: 8px;
+    }
+
+    .hours-table td:first-child {
+      color: var(--cream);
+      font-weight: 500;
+      font-size: 14px;
+      width: 60%;
+    }
+
+    .hours-table td:last-child {
+      color: var(--fire-orange);
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 1px;
+    }
+
+    /* ── ORDER VIA WHATSAPP BANNER ── */
+    .whatsapp-banner {
+      background: linear-gradient(135deg, #0D0D0D 0%, #1a1a1a 100%);
+      border: 1px solid rgba(37,211,102,0.2);
+      padding: 60px 48px;
+      text-align: center;
+      position: relative;
+      z-index: 1;
+    }
+
+    .whatsapp-banner::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse 50% 80% at 50% 50%, rgba(37,211,102,0.05) 0%, transparent 70%);
+    }
+
+    .whatsapp-banner h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(28px, 4vw, 48px);
+      font-weight: 900;
+      color: var(--white);
+      margin-bottom: 12px;
+      position: relative;
+    }
+
+    .whatsapp-banner p {
+      font-size: 16px;
+      color: #999;
+      margin-bottom: 32px;
+      position: relative;
+    }
+
+    .whatsapp-links {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      position: relative;
+    }
+
+    .whatsapp-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      background: #25D366;
+      color: #fff;
+      text-decoration: none;
+      padding: 14px 28px;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 15px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: background 0.3s, transform 0.2s;
+    }
+
+    .whatsapp-btn:hover {
+      background: #1ebe57;
+      transform: scale(1.04);
+    }
+
+    /* ── SOCIAL / CONTACT ── */
+    #contact {
+      padding: 100px 48px;
+      max-width: 900px;
+      margin: 0 auto;
+      text-align: center;
+    }
+
+    .social-row {
+      display: flex;
+      justify-content: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      margin: 40px 0;
+    }
+
+    .social-link {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 14px 24px;
+      background: var(--ash);
+      color: var(--cream);
+      text-decoration: none;
+      font-family: 'Barlow Condensed', sans-serif;
+      font-weight: 700;
+      font-size: 14px;
+      letter-spacing: 1px;
+      text-transform: uppercase;
+      transition: background 0.3s, color 0.3s;
+      border: 1px solid transparent;
+    }
+
+    .social-link i { font-size: 18px; }
+
+    .social-link:hover { border-color: var(--fire-orange); color: var(--fire-orange); }
+    .social-link.facebook:hover { color: #1877F2; border-color: #1877F2; }
+    .social-link.instagram:hover { color: #E1306C; border-color: #E1306C; }
+    .social-link.whatsapp:hover { color: #25D366; border-color: #25D366; }
+    .social-link.tripadvisor:hover { color: #34E0A1; border-color: #34E0A1; }
+    .social-link.email:hover { color: var(--fire-orange); border-color: var(--fire-orange); }
+
+    .contact-line {
+      font-size: 16px;
+      color: #888;
+      margin-bottom: 8px;
+    }
+
+    .contact-line a {
+      color: var(--cream);
+      text-decoration: none;
+      transition: color 0.3s;
+    }
+
+    .contact-line a:hover { color: var(--fire-orange); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: #060606;
+      border-top: 1px solid var(--ash);
+      padding: 36px 48px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .footer-brand {
+      font-family: 'Barlow Condensed', sans-serif;
+      font-size: 13px;
+      font-weight: 600;
+      letter-spacing: 2px;
+      text-transform: uppercase;
+      color: var(--smoke);
+    }
+
+    .footer-brand span { color: var(--fire-red); }
+
+    .footer-links {
+      display: flex;
+      gap: 24px;
+      list-style: none;
+    }
+
+    .footer-links a {
+      color: var(--smoke);
+      text-decoration: none;
+      font-size: 13px;
+      letter-spacing: 1px;
+      transition: color 0.3s;
+    }
+
+    .footer-links a:hover { color: var(--fire-orange); }
+
+    /* ── FIRE ANIMATION ── */
+    @keyframes flicker {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.85; }
+    }
+
+    /* ── RESPONSIVE ── */
+    @media (max-width: 900px) {
+      nav { padding: 16px 24px; }
+      .nav-links { display: none; }
+      #about { grid-template-columns: 1fr; gap: 48px; padding: 60px 24px; }
+      .locations-grid { grid-template-columns: 1fr; }
+      #menu, #reviews, #locations, #contact { padding: 60px 24px; }
+      .about-strip { padding: 16px 24px; gap: 24px; }
+      footer { flex-direction: column; text-align: center; padding: 28px 24px; }
+    }
+
+    /* Fade in on scroll */
+    .reveal {
+      opacity: 0;
+      transform: translateY(30px);
+      transition: opacity 0.7s ease, transform 0.7s ease;
+    }
+    .reveal.visible {
+      opacity: 1;
+      transform: none;
+    }
+  </style>
+</head>
+<body>
+
+<!-- Fire canvas -->
+<canvas id="fire-canvas"></canvas>
+
+<!-- NAV -->
+<nav>
+  <a href="#" class="nav-logo">
+    <img src="/mnt/user-data/uploads/1773004608299_image.png" alt="Candela Logo" />
+  </a>
+  <ul class="nav-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+    <li><a href="#locations">Locations</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <a href="https://wa.me/2975676595" target="_blank" class="nav-order-btn">
+    <i class="fa-brands fa-whatsapp"></i> Order Now
+  </a>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-content">
+    <div class="hero-tagline">
+      <i class="fa-solid fa-fire"></i>
+      Est. Over 20 Years — Oranjestad, Aruba
+      <i class="fa-solid fa-fire"></i>
+    </div>
+    <h1 class="hero-title">
+      Best Food
+      <span>On The Street</span>
+    </h1>
+    <p class="hero-sub">Candela Food Trailer — L.G. Smith Boulevard</p>
+    <p class="hero-desc">
+      Aruba's legendary late-night food trailer. Iconic street food, legendary sauces, and a fiery passion for flavor — open every night until the early hours.
+    </p>
+    <div class="hero-ctas">
+      <a href="https://wa.me/2975676595" target="_blank" class="btn-primary">
+        <i class="fa-brands fa-whatsapp"></i> Order via WhatsApp
+      </a>
+      <a href="#menu" class="btn-outline">
+        <i class="fa-solid fa-utensils"></i> View Menu
+      </a>
+    </div>
+  </div>
+  <div class="scroll-hint">
+    <i class="fa-solid fa-chevron-down"></i>
+    Scroll
+  </div>
+</section>
+
+<!-- STRIP -->
+<div class="about-strip">
+  <div class="strip-item"><i class="fa-solid fa-fire-flame-curved"></i> 20+ Years on the Boulevard</div>
+  <div class="strip-item"><i class="fa-solid fa-star"></i> Best Food On The Street</div>
+  <div class="strip-item"><i class="fa-solid fa-moon"></i> Open Until 3–5 AM</div>
+  <div class="strip-item"><i class="fa-solid fa-map-pin"></i> Two Locations in Aruba</div>
+</div>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="about-text reveal">
+    <p class="section-label"><i class="fa-solid fa-fire-flame-simple"></i> &nbsp; Our Story</p>
+    <h2 class="section-title">Fueled by<br><em>Fire & Flavor</em></h2>
+    <div class="divider"></div>
+    <p><strong>Candela means "fire" in Papiamento</strong> — and that's exactly what you get here. For over two decades, Candela Food Trailer has been the heartbeat of Oranjestad's late-night food scene, parked right off L.G. Smith Boulevard across from Royal Plaza Mall.</p>
+    <p>From locals grabbing a bite after a long shift to tourists discovering the island's most legendary steak & cheese platter, Candela serves everyone with the same fiery passion. Incredible sauces, generous portions, and prices that make sense — every single night.</p>
+    <p>You can also <strong>skip the line and order via WhatsApp</strong>. Grab Aruban classics like sopito, steak & cheese, crazy fries, and the iconic conch sandwich — all made fresh, every night.</p>
+  </div>
+  <div class="about-stats reveal">
+    <div class="stat-box">
+      <div class="stat-number">20+</div>
+      <div class="stat-label">Years of Excellence</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number">2</div>
+      <div class="stat-label">Locations in Aruba</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number">7PM</div>
+      <div class="stat-label">Opens Every Night</div>
+    </div>
+    <div class="stat-box">
+      <div class="stat-number">5AM</div>
+      <div class="stat-label">Weekend Closing</div>
+    </div>
+  </div>
+</section>
+
+<!-- MENU -->
+<section id="menu">
+  <div class="menu-header reveal">
+    <p class="section-label"><i class="fa-solid fa-fire-flame-curved"></i> &nbsp; What We Serve</p>
+    <h2 class="section-title">The <em>Menu</em></h2>
+    <div class="divider"></div>
+    <p style="color:#999; font-size:16px; line-height:1.7;">Something for every craving — from Aruban street classics to late-night guilty pleasures. Ask about daily specials when you visit or order.</p>
+  </div>
+  <div class="menu-grid">
+    <div class="menu-card reveal">
+      <div class="menu-card-icon"><i class="fa-solid fa-bread-slice"></i></div>
+      <h3>Steak &amp; Cheese</h3>
+      <p>The legendary house classic. Juicy steak, melted cheese, and that unforgettable Candela sauce — people have been coming back for this for 20 years.</p>
+      <span class="menu-tag"><i class="fa-solid fa-fire"></i> Fan Favorite</span>
+    </div>
+    <div class="menu-card reveal">
+      <div class="menu-card-icon"><i class="fa-solid fa-fish"></i></div>
+      <h3>Conch Sandwich</h3>
+      <p>Fresh conch in a perfectly toasted bun. A true taste of the Caribbean that keeps seafood lovers coming back night after night.</p>
+      <span class="menu-tag"><i class="fa-solid fa-star"></i> Must Try</span>
+    </div>
+    <div class="menu-card reveal">
+      <div class="menu-card-icon"><i class="fa-solid fa-pepper-hot"></i></div>
+      <h3>Crazy Fries</h3>
+      <p>Loaded fries smothered in Candela's signature sauces. Mix and match the garlic sauce, Candela sauce, and pink sauce for the ultimate experience.</p>
+      <span class="menu-tag"><i class="fa-solid fa-bolt"></i> Late Night Go-To</span>
+    </div>
+    <div class="menu-card reveal">
+      <div class="menu-card-icon"><i class="fa-solid fa-drumstick-bite"></i></div>
+      <h3>Wings</h3>
+      <p>Honey BBQ mini basket wings fried to perfection. Crispy outside, juicy inside — the perfect late-night companion.</p>
+    </div>
+    <div class="menu-card reveal">
+      <div class="menu-card-icon"><i class="fa-solid fa-burger"></i></div>
+      <h3>Burgers &amp; Hot Dogs</h3>
+      <p>Handcrafted burgers and loaded dogs — including the iconic grilled cheese hot dog. Stacked with flavor and our house-made toppings.</p>
+    </div>
+    <div class="menu-card reveal">
+      <div class="menu-card-icon"><i class="fa-solid fa-bowl-food"></i></div>
+      <h3>Aruban Classics</h3>
+      <p>Traditional Aruban soup (sopito) and local dishes made with love. Real island flavors that go beyond the beach.</p>
+      <span class="menu-tag"><i class="fa-solid fa-flag"></i> Local Tradition</span>
+    </div>
+  </div>
+  <div style="text-align:center; margin-top:48px;" class="reveal">
+    <a href="https://wa.me/2975676595" target="_blank" class="btn-primary" style="clip-path:none; border-radius:0;">
+      <i class="fa-brands fa-whatsapp"></i> Order via WhatsApp — Skip the Line
+    </a>
+  </div>
+</section>
+
+<!-- REVIEWS -->
+<section id="reviews">
+  <div class="reviews-header">
+    <div class="reveal">
+      <p class="section-label"><i class="fa-solid fa-star"></i> &nbsp; What People Say</p>
+      <h2 class="section-title">Real <em>Reviews</em></h2>
+      <div class="divider"></div>
+    </div>
+    <div class="reviews-rating reveal">
+      <div class="big-score">4.5</div>
+      <div class="stars">
+        <i class="fa-solid fa-star"></i>
+        <i class="fa-solid fa-star"></i>
+        <i class="fa-solid fa-star"></i>
+        <i class="fa-solid fa-star"></i>
+        <i class="fa-solid fa-star-half-stroke"></i>
+      </div>
+      <div style="font-size:13px; color:#666; margin-top:6px; letter-spacing:1px;">TripAdvisor Rating</div>
+    </div>
+  </div>
+  <div class="reviews-grid">
+    <div class="review-card reveal">
+      <div class="review-stars">
+        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+      </div>
+      <p class="review-text">"Loved Candela! You have an option to order through WhatsApp. Great variety on the menu. Loved the option to mix some sauces to mix up the flavors. Great portion size and reasonable prices."</p>
+      <div class="review-author">
+        <div class="review-avatar">JM</div>
+        <div>
+          <div class="review-name">Jessica M.</div>
+          <div class="review-source"><i class="fa-brands fa-tripadvisor"></i> TripAdvisor</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card reveal">
+      <div class="review-stars">
+        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+      </div>
+      <p class="review-text">"We have been here a few times. Anything you order is good. You get so much food. Their sauces are absolutely amazing. I wish I could bring some home! Don't miss out and pay them a visit. You will not be disappointed!"</p>
+      <div class="review-author">
+        <div class="review-avatar">KL</div>
+        <div>
+          <div class="review-name">Karen L.</div>
+          <div class="review-source"><i class="fa-brands fa-tripadvisor"></i> TripAdvisor</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card reveal">
+      <div class="review-stars">
+        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+      </div>
+      <p class="review-text">"This truck is excellent to get food at if you have the munchies after midnight. It is open for business from late night until the wee hours. Local dishes at very decent prices. Some nights there is a waiting line, but you get helped pretty fast."</p>
+      <div class="review-author">
+        <div class="review-avatar">RT</div>
+        <div>
+          <div class="review-name">Robert T.</div>
+          <div class="review-source"><i class="fa-brands fa-tripadvisor"></i> TripAdvisor</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card reveal">
+      <div class="review-stars">
+        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-regular fa-star"></i>
+      </div>
+      <p class="review-text">"Great food trailer — great late night options! Try the pink sauce on the fries, the chicken breast, and the cheeseburger!! Great flavor and friendly service."</p>
+      <div class="review-author">
+        <div class="review-avatar">MR</div>
+        <div>
+          <div class="review-name">Mike R.</div>
+          <div class="review-source"><i class="fa-brands fa-tripadvisor"></i> TripAdvisor</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card reveal">
+      <div class="review-stars">
+        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+      </div>
+      <p class="review-text">"I've tried many steak and cheese platters on this island and keep coming back to Candela! More of a seafood lover? Ask for their conch sandwich — you'll thank me later. Their flavor, quality and consistency is unmatched. Don't forget to ask for extra garlic sauce!"</p>
+      <div class="review-author">
+        <div class="review-avatar">VA</div>
+        <div>
+          <div class="review-name">Visit Aruba Blog</div>
+          <div class="review-source"><i class="fa-solid fa-globe"></i> visitaruba.com</div>
+        </div>
+      </div>
+    </div>
+    <div class="review-card reveal">
+      <div class="review-stars">
+        <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+      </div>
+      <p class="review-text">"Great food and good price, open pretty late normally so you can pretty much always get your late night snack. A must-visit spot in Aruba — don't leave the island without trying Candela!"</p>
+      <div class="review-author">
+        <div class="review-avatar">SB</div>
+        <div>
+          <div class="review-name">Sandra B.</div>
+          <div class="review-source"><i class="fa-brands fa-tripadvisor"></i> TripAdvisor</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div style="text-align:center; margin-top:48px;" class="reveal">
+    <a href="https://www.tripadvisor.com/Restaurant_Review-g147248-d11952615-Reviews-Candela_food_trailer-Oranjestad_Aruba.html" target="_blank" class="btn-outline" style="clip-path:none; border-radius:0; border:1px solid rgba(245,237,214,0.2);">
+      <i class="fa-brands fa-tripadvisor"></i> Read All Reviews on TripAdvisor
+    </a>
+  </div>
+</section>
+
+<!-- WHATSAPP BANNER -->
+<div class="whatsapp-banner">
+  <h2>Skip the Line. <em style="color:#25D366; font-style:italic;">Order on WhatsApp.</em></h2>
+  <p>Place your order in advance and have it ready when you arrive. Both locations available.</p>
+  <div class="whatsapp-links">
+    <a href="https://wa.me/2975676595" target="_blank" class="whatsapp-btn">
+      <i class="fa-brands fa-whatsapp" style="font-size:20px;"></i>
+      Boulevard Location — +297 567-6595
+    </a>
+    <a href="https://wa.me/2975655292" target="_blank" class="whatsapp-btn">
+      <i class="fa-brands fa-whatsapp" style="font-size:20px;"></i>
+      Ponton Location — +297 565-5292
+    </a>
+  </div>
+</div>
+
+<!-- LOCATIONS -->
+<section id="locations">
+  <div class="locations-inner">
+    <div class="locations-header reveal">
+      <p class="section-label"><i class="fa-solid fa-map-pin"></i> &nbsp; Find Us</p>
+      <h2 class="section-title">Two <em>Locations</em></h2>
+      <div class="divider"></div>
+    </div>
+    <div class="locations-grid">
+      <!-- BLVD -->
+      <div class="location-card reveal">
+        <div class="loc-badge">Main Location</div>
+        <h3>Boulevard — Oranjestad</h3>
+        <div class="loc-detail">
+          <i class="fa-solid fa-location-dot"></i>
+          <div class="loc-detail-text">
+            <strong>Address</strong>
+            L.G. Smith Blvd 13D, Oranjestad, Aruba<br>
+            Across from Royal Plaza Mall
+          </div>
+        </div>
+        <div class="loc-detail">
+          <i class="fa-solid fa-phone"></i>
+          <div class="loc-detail-text">
+            <strong>Phone / WhatsApp</strong>
+            <a href="tel:+2975676595" style="color:#bbb; text-decoration:none;">+297 567-6595</a>
+          </div>
+        </div>
+        <div class="loc-detail">
+          <i class="fa-solid fa-clock"></i>
+          <div class="loc-detail-text">
+            <strong>Opening Hours</strong>
+            <table class="hours-table">
+              <tr><td>Sunday – Thursday</td><td>7:00 PM – 3:00 AM</td></tr>
+              <tr><td>Friday – Saturday</td><td>7:00 PM – 5:00 AM</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="loc-detail">
+          <i class="fa-solid fa-envelope"></i>
+          <div class="loc-detail-text">
+            <strong>Email (Events &amp; Business)</strong>
+            <a href="mailto:candelafoodtrailer@gmail.com" style="color:#bbb; text-decoration:none;">candelafoodtrailer@gmail.com</a>
+          </div>
+        </div>
+        <a href="https://maps.google.com/?q=Candela+Food+Trailer,+L.G.+Smith+Blvd+13D,+Oranjestad,+Aruba" target="_blank" class="loc-map-btn">
+          <i class="fa-solid fa-diamond-turn-right"></i> Open in Google Maps
+        </a>
+      </div>
+
+      <!-- PONTON -->
+      <div class="location-card reveal">
+        <div class="loc-badge">Second Location</div>
+        <h3>Ponton</h3>
+        <div class="loc-detail">
+          <i class="fa-solid fa-location-dot"></i>
+          <div class="loc-detail-text">
+            <strong>Address</strong>
+            Ponton, Aruba<br>
+            Off the main road near Wema
+          </div>
+        </div>
+        <div class="loc-detail">
+          <i class="fa-solid fa-phone"></i>
+          <div class="loc-detail-text">
+            <strong>Phone / WhatsApp</strong>
+            <a href="tel:+2975655292" style="color:#bbb; text-decoration:none;">+297 565-5292</a>
+          </div>
+        </div>
+        <div class="loc-detail">
+          <i class="fa-solid fa-clock"></i>
+          <div class="loc-detail-text">
+            <strong>Opening Hours</strong>
+            <table class="hours-table">
+              <tr><td>Sunday – Thursday</td><td>7:00 PM – 3:00 AM</td></tr>
+              <tr><td>Friday – Saturday</td><td>7:00 PM – 5:00 AM</td></tr>
+            </table>
+          </div>
+        </div>
+        <div class="loc-detail">
+          <i class="fa-solid fa-fire"></i>
+          <div class="loc-detail-text">
+            <strong>Note</strong>
+            Known for exceptional quality — a local favorite in the Ponton neighborhood.
+          </div>
+        </div>
+        <a href="https://maps.google.com/?q=Candela+Food+Trailer+Ponton+Aruba" target="_blank" class="loc-map-btn">
+          <i class="fa-solid fa-diamond-turn-right"></i> Open in Google Maps
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT / SOCIAL -->
+<section id="contact">
+  <div class="reveal">
+    <p class="section-label"><i class="fa-solid fa-share-nodes"></i> &nbsp; Connect With Us</p>
+    <h2 class="section-title">Follow the <em>Flame</em></h2>
+    <div class="divider" style="margin: 0 auto 24px;"></div>
+    <p style="color:#999; font-size:16px; line-height:1.7; max-width:480px; margin:0 auto;">Stay updated on daily specials, events, and all things Candela. Follow us on social media and never miss a night.</p>
+  </div>
+  <div class="social-row reveal">
+    <a href="https://www.facebook.com/CandelaFoodTruckAruba/" target="_blank" class="social-link facebook">
+      <i class="fa-brands fa-facebook"></i> Facebook
+    </a>
+    <a href="https://www.instagram.com/candelafoodtruckaruba/" target="_blank" class="social-link instagram">
+      <i class="fa-brands fa-instagram"></i> Instagram
+    </a>
+    <a href="https://wa.me/2975676595" target="_blank" class="social-link whatsapp">
+      <i class="fa-brands fa-whatsapp"></i> WhatsApp
+    </a>
+    <a href="https://www.tripadvisor.com/Restaurant_Review-g147248-d11952615-Reviews-Candela_food_trailer-Oranjestad_Aruba.html" target="_blank" class="social-link tripadvisor">
+      <i class="fa-brands fa-tripadvisor"></i> TripAdvisor
+    </a>
+    <a href="mailto:candelafoodtrailer@gmail.com" class="social-link email">
+      <i class="fa-solid fa-envelope"></i> Email Us
+    </a>
+  </div>
+  <div class="reveal" style="margin-top:20px;">
+    <p class="contact-line"><i class="fa-solid fa-phone" style="color:var(--fire-orange); margin-right:8px;"></i> Boulevard: <a href="tel:+2975676595">+297 567-6595</a> &nbsp;|&nbsp; Ponton: <a href="tel:+2975655292">+297 565-5292</a></p>
+    <p class="contact-line"><i class="fa-solid fa-envelope" style="color:var(--fire-orange); margin-right:8px;"></i> <a href="mailto:candelafoodtrailer@gmail.com">candelafoodtrailer@gmail.com</a></p>
+    <p class="contact-line" style="margin-top:6px;"><i class="fa-solid fa-circle-info" style="color:var(--fire-orange); margin-right:8px;"></i> For events &amp; business inquiries, email us directly.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-brand"><span>Candela</span> Food Trailer &mdash; Aruba &copy; 2024</div>
+  <ul class="footer-links">
+    <li><a href="#about">About</a></li>
+    <li><a href="#menu">Menu</a></li>
+    <li><a href="#locations">Locations</a></li>
+    <li><a href="#contact">Contact</a></li>
+  </ul>
+  <div class="footer-brand" style="color:var(--smoke);">
+    <i class="fa-solid fa-fire" style="color:var(--fire-red);"></i> Best Food On The Street
+  </div>
+</footer>
+
+<script>
+  // ── Fire particles ──
+  const canvas = document.getElementById('fire-canvas');
+  const ctx = canvas.getContext('2d');
+  let W, H, particles = [];
+
+  function resize() {
+    W = canvas.width = window.innerWidth;
+    H = canvas.height = window.innerHeight;
+  }
+  resize();
+  window.addEventListener('resize', resize);
+
+  class Particle {
+    constructor() { this.reset(); }
+    reset() {
+      this.x = Math.random() * W;
+      this.y = H + 20;
+      this.size = Math.random() * 4 + 1;
+      this.speedX = (Math.random() - 0.5) * 1.2;
+      this.speedY = -(Math.random() * 2.5 + 1.5);
+      this.life = 1;
+      this.decay = Math.random() * 0.008 + 0.004;
+      const r = [214, 244, 247, 255][Math.floor(Math.random()*4)];
+      const g = [40, 96, 183, 69][Math.floor(Math.random()*4)];
+      this.color = `rgb(${r},${g},0)`;
+    }
+    update() {
+      this.x += this.speedX + Math.sin(Date.now()*0.001 + this.x) * 0.3;
+      this.y += this.speedY;
+      this.life -= this.decay;
+      if (this.life <= 0 || this.y < -20) this.reset();
+    }
+    draw() {
+      ctx.save();
+      ctx.globalAlpha = this.life * 0.6;
+      ctx.fillStyle = this.color;
+      ctx.shadowColor = this.color;
+      ctx.shadowBlur = 8;
+      ctx.beginPath();
+      ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.restore();
+    }
+  }
+
+  for (let i = 0; i < 120; i++) {
+    const p = new Particle();
+    p.y = Math.random() * H; // scatter initial positions
+    particles.push(p);
+  }
+
+  function animate() {
+    ctx.clearRect(0, 0, W, H);
+    particles.forEach(p => { p.update(); p.draw(); });
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  // ── Scroll reveal ──
+  const reveals = document.querySelectorAll('.reveal');
+  const io = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        io.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+  reveals.forEach(el => io.observe(el));
+
+  // ── Nav background on scroll ──
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    nav.style.background = window.scrollY > 60
+      ? 'rgba(0,0,0,0.96)'
+      : 'linear-gradient(to bottom, rgba(0,0,0,0.92) 0%, transparent 100%)';
+  });
+</script>
+</body>
+</html>
