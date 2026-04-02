@@ -885,7 +885,6 @@
     <button class="chat-quick-btn" onclick="quickAsk('location')"><i class="fa-solid fa-map-pin"></i> Location</button>
     <button class="chat-quick-btn" onclick="quickAsk('order')"><i class="fa-brands fa-whatsapp"></i> Order</button>
     <button class="chat-quick-btn" onclick="quickAsk('popular')"><i class="fa-solid fa-fire"></i> Best Dish</button>
-    <button class="chat-quick-btn" onclick="quickAsk('price')"><i class="fa-solid fa-tag"></i> Prices</button>
   </div>
 
   <div class="chat-input-row">
@@ -969,7 +968,6 @@ const KB = {
 
   popular: `Our most popular dishes are:<br><br><b>1. Steak &amp; Cheese</b> — the classic everyone comes back for<br><b>2. Crazy Fries</b> — loaded with Candela&rsquo;s legendary sauces (try pink sauce + garlic sauce!)<br><b>3. Conch Sandwich</b> — a true Caribbean gem<br><b>4. Crispy Chicken Burger</b> — fan favorite late-night bite<br><br>View the full menu: <a href="${MENU_LINK}" target="_blank">Full Menu Here</a>`,
 
-  price: `Candela is known for generous portions at great prices! Some examples:<br><br>&bull; Plain Fries: from Afl. 3.50<br>&bull; Fries with Peanut Sauce: Afl. 4.50<br>&bull; Crazy Fries: Afl. 8.75<br>&bull; Mini Basket Wings: Afl. 21.00<br>&bull; Basket Wings: Afl. 25.00<br><br>See full pricing on the menu: <a href="${MENU_LINK}" target="_blank">View Full Menu</a>`,
 
   contact: `You can reach us at:<br><br><b>Boulevard:</b> <a href="tel:+2975676595">+297 567-6595</a><br><b>Ponton:</b> <a href="tel:+2975655292">+297 565-5292</a><br><b>Email:</b> <a href="mailto:candelafoodtrailer@gmail.com">candelafoodtrailer@gmail.com</a><br><br>For events &amp; business inquiries, email is best!`,
 
@@ -1019,7 +1017,6 @@ function matchIntent(input) {
   if (/where|location|address|find|map|direction|boulevard|ponton|place/.test(q)) return KB.location;
   if (/order|whatsapp|wa|online|delivery|pickup|pre.order/.test(q)) return KB.order;
   if (/popular|best|recommend|favorite|famous|try|must/.test(q)) return KB.popular;
-  if (/price|cost|how much|cheap|afl|dollar|affordable/.test(q)) return KB.price;
   if (/contact|phone|call|email|reach|number/.test(q)) return KB.contact;
   if (/social|instagram|facebook|follow|tripadvisor/.test(q)) return KB.social;
   if (/about|story|history|how long|who|what is candela/.test(q)) return KB.about;
@@ -1039,7 +1036,7 @@ function sendMessage() {
 }
 
 function quickAsk(type) {
-  const labels = { menu:'Show me the menu', hours:'What are your opening hours?', location:'Where are you located?', order:'How can I place an order?', popular:'What is your most popular dish?', price:'How much do things cost?' };
+  const labels = { menu:'Show me the menu', hours:'What are your opening hours?', location:'Where are you located?', order:'How can I place an order?', popular:'What is your most popular dish?', };
   addMessage(labels[type], 'user');
   botReply(KB[type] || KB.menu);
 }
